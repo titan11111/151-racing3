@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>SUNSET DRIFT — 疑似3Dレーサー</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect rx='14' width='64' height='64' fill='%230a0410'/%3E%3Cpath d='M8 42h48L45 22H19z' fill='%23ff2e88'/%3E%3Ccircle cx='20' cy='45' r='6' fill='%2300e5ff'/%3E%3Ccircle cx='44' cy='45' r='6' fill='%2300e5ff'/%3E%3C/svg%3E">
 <style>
   :root{
     --neon:#ff2e88; --neon2:#00e5ff; --gold:#ffd34e; --ink:#0a0410;
@@ -37,9 +38,79 @@
   .btn:active{transform:translateY(4px);box-shadow:0 0 26px rgba(255,46,136,.6),0 4px 0 #6b0030;}
   .sub{margin-top:22px;font-family:"Courier New",monospace;font-size:13px;color:#cbb;line-height:1.9;opacity:.9;}
   .sub b{color:var(--gold);}
+  .opts{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;pointer-events:auto}
+  .opt{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 10px;border-radius:10px;
+    border:1px solid rgba(0,229,255,.38);
+    background:rgba(10,4,16,.45);
+    color:#dff;font-family:"Courier New",monospace;font-size:12px;
+  }
+  .opt select{
+    background:rgba(10,4,16,.75);color:#fff;
+    border:1px solid rgba(255,46,136,.55);border-radius:8px;
+    padding:4px 8px;font-size:12px;
+  }
+  /* ---- technical speed title ---- */
+  #title{isolation:isolate;overflow:hidden;background:linear-gradient(90deg,rgba(10,4,16,.92) 0%,rgba(10,4,16,.54) 44%,rgba(10,4,16,.78) 100%);backdrop-filter:none;}
+  #title::before{content:"";position:absolute;z-index:-1;inset:42% -15% -38%;background:repeating-linear-gradient(90deg,rgba(0,229,255,.22) 0 1px,transparent 1px 9%),repeating-linear-gradient(0deg,rgba(255,46,136,.18) 0 1px,transparent 1px 18%);transform:perspective(420px) rotateX(63deg) scale(1.35);transform-origin:center top;animation:gridRush 1.2s linear infinite;mask-image:linear-gradient(to bottom,transparent,#000 22%,#000);}
+  #title::after{content:"";position:absolute;z-index:5;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.14) 3px 4px),linear-gradient(90deg,rgba(255,46,136,.12),transparent 25% 75%,rgba(0,229,255,.10));mix-blend-mode:screen;opacity:.48;}
+  .speed-streaks{position:absolute;z-index:-1;inset:0;overflow:hidden;pointer-events:none;}
+  .speed-streaks i{position:absolute;left:-35%;width:34%;height:2px;background:linear-gradient(90deg,transparent,#fff 55%,var(--neon2));box-shadow:0 0 10px var(--neon2);transform:skewX(-25deg);animation:speedStreak 1.05s linear infinite;opacity:.72;}
+  .speed-streaks i:nth-child(1){top:18%;animation-delay:-.15s}.speed-streaks i:nth-child(2){top:34%;animation-delay:-.72s;width:46%}.speed-streaks i:nth-child(3){top:61%;animation-delay:-.38s}.speed-streaks i:nth-child(4){top:78%;animation-delay:-.9s;width:28%;background:linear-gradient(90deg,transparent,#fff,var(--neon));box-shadow:0 0 10px var(--neon)}
+  .title-shell{position:relative;z-index:2;width:min(880px,92vw);padding:clamp(12px,3vh,28px) clamp(14px,4vw,40px);border-left:2px solid rgba(255,46,136,.82);border-right:1px solid rgba(0,229,255,.5);background:linear-gradient(105deg,rgba(10,4,16,.72),rgba(10,4,16,.25) 55%,rgba(10,4,16,.56));clip-path:polygon(3% 0,100% 0,97% 100%,0 100%);}
+  .title-shell::before,.title-shell::after{content:"";position:absolute;height:3px;width:22%;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+  .title-shell::before{left:3%;top:0}.title-shell::after{right:3%;bottom:0;background:var(--neon2);box-shadow:0 0 14px var(--neon2)}
+  .tech-rail{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;color:#bffaff;font:700 clamp(9px,1.8vw,12px) "Courier New",monospace;letter-spacing:2px;text-transform:uppercase;}
+  .tech-rail .live::before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:#7cff5a;box-shadow:0 0 10px #7cff5a;animation:livePulse .75s ease-in-out infinite alternate;}
+  #title .logo{position:relative;display:inline-block;transform:skewX(-7deg);filter:drop-shadow(20px 12px 0 rgba(0,0,0,.25));}
+  #title .logo::before,#title .logo::after{content:"";position:absolute;z-index:3;left:-8%;width:116%;height:5px;background:#0a0410;transform:skewX(-25deg);opacity:.8;}
+  #title .logo::before{top:48%}#title .logo::after{top:69%;height:3px;left:8%;width:86%;}
+  #title .logo .l1{font-size:clamp(30px,8vw,74px);letter-spacing:clamp(2px,1vw,9px);}
+  #title .logo .l2{font-size:clamp(48px,13vw,128px);letter-spacing:-4px;}
+  #title .tag{margin-top:8px;font-size:clamp(9px,2vw,13px);letter-spacing:clamp(3px,1vw,8px);}
+  .telemetry-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:min(520px,86%);margin:12px auto 0;font:700 10px "Courier New",monospace;letter-spacing:1px;color:#dff;}
+  .telemetry-strip span{padding:6px 8px;border-top:1px solid rgba(0,229,255,.62);background:linear-gradient(90deg,rgba(0,229,255,.12),transparent);}
+  .telemetry-strip b{color:var(--neon);font-weight:bold;}
+  #title .opts{margin-top:12px}
+  #title .btn{position:relative;margin-top:16px;min-width:min(320px,78vw);overflow:hidden;background:linear-gradient(110deg,var(--gold) 0 36%,#fff3a2 48%,var(--neon) 62% 100%);background-size:220% 100%;animation:ignitionSweep 2.3s ease-in-out infinite;}
+  #title .btn::before{content:"IGNITION";position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:8px;letter-spacing:1px;opacity:.65;}
+  #title .btn::after{content:"03";position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:10px;opacity:.6;}
+  #title .sub{margin-top:12px;font-size:clamp(9px,1.8vw,12px);line-height:1.55;}
+  @keyframes speedStreak{0%{transform:translateX(0) skewX(-25deg);opacity:0}12%{opacity:.8}100%{transform:translateX(410%) skewX(-25deg);opacity:0}}
+  @keyframes gridRush{from{background-position:0 0,0 0}to{background-position:0 0,0 72px}}
+  @keyframes ignitionSweep{0%,20%{background-position:100% 0}65%,100%{background-position:0 0}}
+  @keyframes livePulse{from{opacity:.45;transform:scale(.8)}to{opacity:1;transform:scale(1.15)}}
+  @media(max-height:520px){.title-shell{width:min(760px,90vw);padding:8px 28px}.tech-rail{margin-bottom:2px}#title .logo .l1{font-size:25px}#title .logo .l2{font-size:48px}#title .tag{margin-top:2px}.telemetry-strip{margin-top:5px}.telemetry-strip span{padding:3px 6px}#title .opts{margin-top:5px}#title .opt{padding:4px 7px}#title .btn{margin-top:7px;padding:10px 36px}#title .sub{display:none}}
   #result .big{font-family:"Arial Black",sans-serif;font-style:italic;font-size:clamp(34px,9vw,72px);color:var(--gold);text-shadow:0 0 18px var(--gold);}
-  #result .stats{font-family:"Courier New",monospace;margin-top:18px;font-size:clamp(14px,3.4vw,20px);line-height:2;}
+  #result{overflow:hidden;padding:calc(12px + env(safe-area-inset-top)) 14px calc(12px + env(safe-area-inset-bottom));}
+  #result .big{position:relative;z-index:2;}
+  #result .stats{font-family:"Courier New",monospace;margin-top:4px;font-size:clamp(12px,2.8vw,18px);line-height:1.55;position:relative;z-index:2;}
   #result .stats b{color:var(--neon2);}
+  #result .btn{margin-top:12px;position:relative;z-index:2;}
+
+  /* ---- neon victory podium ---- */
+  .podium-wrap{position:relative;width:min(680px,94vw);height:clamp(180px,42vh,330px);margin:-2px auto 0;filter:drop-shadow(0 16px 24px rgba(0,0,0,.45));}
+  .podium-wrap::before{content:"";position:absolute;inset:10% 7% 0;background:radial-gradient(ellipse at 50% 55%,rgba(255,211,78,.22),rgba(255,46,136,.07) 48%,transparent 72%);pointer-events:none;}
+  #victoryPodium{width:100%;height:100%;overflow:visible;}
+  .podium-racer use{transform-box:fill-box;transform-origin:center bottom;animation:victoryBounce 1.15s cubic-bezier(.2,.8,.2,1) infinite alternate;}
+  .podium-racer.rank-2{color:#00e5ff;}.podium-racer.rank-2 use{animation-delay:.18s;}
+  .podium-racer.rank-1{color:#ffd34e;}.podium-racer.rank-1 use{animation-delay:0s;}
+  .podium-racer.rank-3{color:#ff7b3d;}.podium-racer.rank-3 use{animation-delay:.32s;}
+  .podium-racer.is-player{color:#ff2e88;filter:url(#playerGlow);}
+  .podium-racer.is-player .racer-core{stroke:#fff;stroke-width:3;}
+  #podiumPlayerBadge{opacity:0;transition:opacity .2s;fill:#fff;font:bold 16px "Courier New",monospace;letter-spacing:2px;text-anchor:middle;paint-order:stroke;stroke:#0a0410;stroke-width:5px;}
+  #podiumPlayerBadge.show{opacity:1;}
+  .confetti{transform-box:fill-box;transform-origin:center;animation:confettiFall 1.9s linear infinite;}
+  .confetti.c2{animation-delay:-.55s;animation-duration:2.3s;}
+  .confetti.c3{animation-delay:-1.1s;animation-duration:1.7s;}
+  .crowd-arm{transform-box:fill-box;transform-origin:center bottom;animation:cheerWave .5s ease-in-out infinite alternate;}
+  .crowd-arm.alt{animation-delay:-.25s;}
+  @keyframes victoryBounce{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-8px) rotate(1deg)}}
+  @keyframes cheerWave{from{transform:rotate(-8deg)}to{transform:rotate(10deg)}}
+  @keyframes confettiFall{0%{transform:translateY(-28px) rotate(0);opacity:0}12%{opacity:1}100%{transform:translateY(285px) rotate(420deg);opacity:0}}
+  @media(max-height:520px){.podium-wrap{height:175px;width:min(500px,78vw)}#result .big{font-size:30px}.podium-copy{display:none!important}#result .stats{font-size:11px;line-height:1.3}#result .btn{padding:10px 30px;margin-top:6px}}
+  @media(max-width:520px){#result .big{font-size:clamp(22px,7.2vw,30px);letter-spacing:-1px;white-space:nowrap}.podium-wrap{width:96vw}}
 
   /* ---- countdown ---- */
   #count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
@@ -93,19 +164,89 @@
 
   <!-- title -->
   <div id="title" class="screen">
-    <div class="logo"><span class="l1">SUNSET</span><span class="l2">DRIFT</span></div>
-    <div class="tag">疑似3D ARCADE RACER</div>
-    <button class="btn" id="startBtn">▶ START</button>
-    <div class="sub">
-      <b>PC:</b> ← → ステア / ↑ アクセル / ↓ ブレーキ<br>
-      <b>スマホ:</b> 画面左右でステア・GAS/BRAKE<br>
-      3周のベストラップを狙え。コースアウトは減速。
+    <div class="speed-streaks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="title-shell">
+      <div class="tech-rail"><span class="live">SYSTEM READY</span><span>SC-03 // 198X</span></div>
+      <div class="logo"><span class="l1">SUNSET</span><span class="l2">DRIFT</span></div>
+      <div class="tag">HIGH VELOCITY // NEON GRAND PRIX</div>
+      <div class="telemetry-strip" aria-hidden="true"><span>ENGINE <b>SYNC</b></span><span>TRACTION <b>92%</b></span><span>BOOST <b>ARMED</b></span></div>
+      <div class="opts">
+        <label class="opt">COURSE
+          <select id="courseSel">
+            <option value="classic">今のコース</option>
+            <option value="circle">円コース</option>
+            <option value="straight">まっすぐコース</option>
+          </select>
+        </label>
+        <label class="opt">CAR SIZE
+          <select id="carSizeSel">
+            <option value="small">小さい</option>
+            <option value="medium" selected>中くらい</option>
+            <option value="large">大きい</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn" id="startBtn">▶ START RACE</button>
+      <div class="sub">
+        <b>PC:</b> ← → ステア / ↑ アクセル / ↓ ブレーキ<br>
+        <b>スマホ:</b> 画面左右でステア・GAS/BRAKE<br>
+        3周のベストラップを狙え。コースアウトは減速。
+      </div>
     </div>
   </div>
 
   <!-- result -->
   <div id="result" class="screen hidden">
     <div class="big" id="r-title">FINISH!</div>
+    <div class="podium-wrap" aria-label="1位、2位、3位のレーサーが喜ぶ表彰台">
+      <svg id="victoryPodium" viewBox="0 0 680 330" role="img" aria-labelledby="podiumTitle podiumDesc">
+        <title id="podiumTitle">SUNSET DRIFT ビクトリーポディウム</title>
+        <desc id="podiumDesc">1位、2位、3位のレーサーが表彰台で両手を上げ、観客が祝福しています。</desc>
+        <defs>
+          <linearGradient id="podiumGold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff1a8"/><stop offset=".45" stop-color="#ffd34e"/><stop offset="1" stop-color="#b45d00"/></linearGradient>
+          <linearGradient id="podiumSilver" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e8fdff"/><stop offset=".5" stop-color="#7ce9f5"/><stop offset="1" stop-color="#18768e"/></linearGradient>
+          <linearGradient id="podiumBronze" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd0a2"/><stop offset=".5" stop-color="#ff7b3d"/><stop offset="1" stop-color="#91320d"/></linearGradient>
+          <filter id="playerGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="5" result="b"/><feFlood flood-color="#ff2e88"/><feComposite in2="b" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <symbol id="racerIcon" viewBox="-58 -88 116 112">
+            <g class="racer-core" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M-24-24 L-49-54 L-55-76 M24-24 L49-54 L55-78" stroke-width="13"/>
+              <path d="M-30 22 L-17-15 Q0-31 17-15 L30 22 Z" fill="currentColor" stroke-width="3"/>
+              <circle cx="0" cy="-48" r="23" fill="#21112b" stroke-width="6"/>
+              <path d="M-19-51 Q0-68 19-51 L16-39 Q0-31-16-39 Z" fill="#bff8ff" stroke-width="2"/>
+              <path d="M-15-67 Q0-78 15-67" stroke="#fff" stroke-width="4" opacity=".8"/>
+            </g>
+          </symbol>
+        </defs>
+
+        <g opacity=".75" fill="none" stroke="#ff2e88" stroke-width="5" stroke-linecap="round">
+          <g transform="translate(42 258)"><circle cy="-25" r="10" fill="#24102f"/><path d="M0-14V18 M0-5L-22-32 M0-5L21-35" class="crowd-arm"/></g>
+          <g transform="translate(91 269)" stroke="#00e5ff"><circle cy="-25" r="10" fill="#24102f"/><path d="M0-14V18 M0-5L-20-37 M0-5L22-30" class="crowd-arm alt"/></g>
+          <g transform="translate(638 258)"><circle cy="-25" r="10" fill="#24102f"/><path d="M0-14V18 M0-5L-22-35 M0-5L21-32" class="crowd-arm alt"/></g>
+          <g transform="translate(589 269)" stroke="#00e5ff"><circle cy="-25" r="10" fill="#24102f"/><path d="M0-14V18 M0-5L-20-30 M0-5L22-37" class="crowd-arm"/></g>
+        </g>
+
+        <g filter="url(#softGlow)">
+          <path d="M206 227H320V309H206Z" fill="url(#podiumSilver)" stroke="#dffcff" stroke-width="3"/>
+          <path d="M320 178H451V309H320Z" fill="url(#podiumGold)" stroke="#fff4ad" stroke-width="4"/>
+          <path d="M451 248H565V309H451Z" fill="url(#podiumBronze)" stroke="#ffd0a2" stroke-width="3"/>
+          <path d="M192 309H579" stroke="#ff2e88" stroke-width="5"/>
+        </g>
+        <g fill="#13071b" font-family="Arial Black, Impact, sans-serif" font-style="italic" text-anchor="middle">
+          <text x="263" y="286" font-size="44">2</text><text x="386" y="261" font-size="64">1</text><text x="508" y="292" font-size="40">3</text>
+        </g>
+
+        <g id="podium-racer-2" class="podium-racer rank-2" transform="translate(263 219)"><use href="#racerIcon" x="-48" y="-94" width="96" height="112"/></g>
+        <g id="podium-racer-1" class="podium-racer rank-1" transform="translate(386 169)"><use href="#racerIcon" x="-54" y="-106" width="108" height="126"/></g>
+        <g id="podium-racer-3" class="podium-racer rank-3" transform="translate(508 239)"><use href="#racerIcon" x="-45" y="-88" width="90" height="105"/></g>
+        <text id="podiumPlayerBadge" x="386" y="40">YOU</text>
+
+        <g class="confetti c1" fill="#ffd34e"><rect x="148" y="4" width="9" height="20" rx="2"/><rect x="474" y="25" width="8" height="17" rx="2"/></g>
+        <g class="confetti c2" fill="#00e5ff"><rect x="225" y="-15" width="8" height="18" rx="2"/><rect x="562" y="2" width="10" height="19" rx="2"/></g>
+        <g class="confetti c3" fill="#ff2e88"><rect x="340" y="-5" width="9" height="20" rx="2"/><rect x="105" y="18" width="8" height="17" rx="2"/></g>
+        <text class="podium-copy" x="340" y="326" fill="#fff" opacity=".82" font="bold 13px Courier New, monospace" letter-spacing="7" text-anchor="middle">SUNSET CITY CHAMPIONS</text>
+      </svg>
+    </div>
     <div class="stats" id="r-stats"></div>
     <button class="btn" id="againBtn">↻ RETRY</button>
   </div>
@@ -135,6 +276,12 @@ const CENTRIFUGAL  = 0.32;
 const TOTAL_LAPS   = 3;
 const N_CARS       = 26;
 const AI_TYPES     = ['stable','aggressive','defensive'];
+const TRACK_TYPES  = { CLASSIC:'classic', CIRCLE:'circle', STRAIGHT:'straight' };
+const CAR_SIZES = {
+  small:  { visual:0.84, hitbox:0.58 },
+  medium: { visual:1.00, hitbox:0.70 },
+  large:  { visual:1.18, hitbox:0.82 }
+};
 
 const MAXSPEED     = SEG_LEN * 62;          // world units / sec
 const ACCEL        = MAXSPEED / 4.2;
@@ -168,6 +315,8 @@ let flashText = '', flashTimer = 0;
 let rivalCarId = -1;
 let jumpTimer = 0, jumpDuration = 0, jumpLift = 0, airLift = 0, splashTimer = 0;
 let lastHazardSeg = -1;
+let selectedTrack = TRACK_TYPES.CLASSIC;
+let selectedCarSize = 'medium';
 
 // hi-score (best lap) persists only in-memory per spec
 const keys = { left:false, right:false, gas:false, brake:false };
@@ -247,21 +396,28 @@ function placeHazard(kind, index, len, lane, width, strength){
 
 function buildTrack(){
   segments=[];
-  S(12);                                   // straight start
-  Cv(40,-C.MED,H_.LOW);                     // left + small hill
-  Cv(30, C.EASY,H_.MED);
-  S(16);
-  Cv(36, C.HARD,-H_.MED);                   // hard right, downhill
-  Cv(28,-C.MED, H_.HIGH);                   // left, big hill
-  S(10);
-  Cv(44,-C.HARD,-H_.LOW);                   // long hard left
-  Cv(30, C.MED, H_.LOW);
-  Cv(24, C.EASY,-H_.MED);
-  S(14);
-  Cv(34,-C.EASY, H_.MED);
-  Cv(40, C.HARD, H_.HIGH);                  // climbing right
-  Cv(30,-C.MED,-H_.HIGH);                   // diving left
-  S(20);                                    // long finishing straight
+  if(selectedTrack===TRACK_TYPES.CIRCLE){
+    for(let i=0;i<13;i++) Cv(28, C.EASY, i%3===0 ? H_.LOW*0.2 : 0);
+    S(10);
+  }else if(selectedTrack===TRACK_TYPES.STRAIGHT){
+    S(220);
+  }else{
+    S(12);                                   // straight start
+    Cv(40,-C.MED,H_.LOW);                     // left + small hill
+    Cv(30, C.EASY,H_.MED);
+    S(16);
+    Cv(36, C.HARD,-H_.MED);                   // hard right, downhill
+    Cv(28,-C.MED, H_.HIGH);                   // left, big hill
+    S(10);
+    Cv(44,-C.HARD,-H_.LOW);                   // long hard left
+    Cv(30, C.MED, H_.LOW);
+    Cv(24, C.EASY,-H_.MED);
+    S(14);
+    Cv(34,-C.EASY, H_.MED);
+    Cv(40, C.HARD, H_.HIGH);                  // climbing right
+    Cv(30,-C.MED,-H_.HIGH);                   // diving left
+    S(20);                                    // long finishing straight
+  }
   // roadside sprites (procedural trees & signs)
   for(let n=10;n<segments.length;n++){
     if(n%7===0)  segments[n].sprites.push({ side:-1, kind:'tree', off:rnd(1.3,2.4) });
@@ -445,6 +601,12 @@ function drawCar(cx, baseY, scaleW, color, isPlayer, isRival){
   }
   ctx.restore();
 }
+function getPlayerCarVisualScale(){
+  return (CAR_SIZES[selectedCarSize] || CAR_SIZES.medium).visual;
+}
+function getPlayerCarHitbox(){
+  return (CAR_SIZES[selectedCarSize] || CAR_SIZES.medium).hitbox;
+}
 function rr(x,y,w,h,r){ ctx.beginPath();
   ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
   ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
@@ -583,7 +745,7 @@ function render(){
   // player car
   const bounce = (speed>0)? Math.sin(position*0.06)*speed/MAXSPEED*4 : 0;
   const steerTilt = (keys.left? -1:0)+(keys.right?1:0);
-  const pcw=W*0.18;
+  const pcw=W*0.18*getPlayerCarVisualScale();
   ctx.save();
   ctx.translate(W/2 + steerTilt*pcw*0.12, H*0.86 + bounce - airLift);
   ctx.rotate(steerTilt*0.06);
@@ -800,7 +962,7 @@ function update(dt){
   }
   // collision + near miss: rear-end, side rub, and close-call rewards.
   for(const car of cars){
-    const cw=car.w*0.7, pw=0.7;
+    const cw=car.w*0.7, pw=getPlayerCarHitbox();
     let relZ = (car.z - (position+PLAYER_Z) + trackLen) % trackLen;
     if(relZ>trackLen*0.5) relZ -= trackLen;
     if(Math.abs(relZ) > SEG_LEN*0.62) continue;
@@ -812,6 +974,7 @@ function update(dt){
       if(relZ > SEG_LEN*0.14 && speed > car.speed+MAXSPEED*0.02){
         // rear impact
         speed = Math.min(speed, car.speed*0.64);
+        car.speed = Math.max(MAXSPEED*0.2, car.speed*0.7);
         shake = Math.max(shake,7.2);
         blip(110,0.16,'sawtooth');
       }else{
@@ -897,7 +1060,7 @@ function frame(t){
 
   if(state==='count'){
     countT-=dt;
-    drawStaticScene();
+    drawStaticScene(dt);
     if(countT<=0){ countN--; countT=1; blip(countN>0?660:1046,0.18); 
       document.getElementById('count-n').textContent = countN>0?countN:'GO!';
       if(countN<0){ state='play'; lapStart=raceTime=0; _prevPos=position; document.getElementById('count').classList.add('hidden'); }
@@ -907,14 +1070,27 @@ function frame(t){
     render();
     updateHUD();
   }else if(state==='title'||state==='done'){
-    drawStaticScene();
+    drawStaticScene(dt);
   }
   requestAnimationFrame(frame);
 }
-function drawStaticScene(){
-  // gentle idle camera drift on menus
-  if(state!=='play'){ position=(position+ (state==='count'?0: 200*0.016))%trackLen; }
+function drawStaticScene(dt){
+  // The title is already racing: fast road flow sells velocity before input.
+  if(state==='title'){
+    position=(position+2600*(dt||0.016))%trackLen;
+    playerX=Math.sin(performance.now()*0.00042)*0.12;
+  }else if(state==='done'){
+    position=(position+420*(dt||0.016))%trackLen;
+  }
   render();
+}
+function applySelectionsFromUI(){
+  const courseEl = document.getElementById('courseSel');
+  const sizeEl = document.getElementById('carSizeSel');
+  const courseVal = courseEl ? courseEl.value : TRACK_TYPES.CLASSIC;
+  const sizeVal = sizeEl ? sizeEl.value : 'medium';
+  selectedTrack = Object.values(TRACK_TYPES).includes(courseVal) ? courseVal : TRACK_TYPES.CLASSIC;
+  selectedCarSize = CAR_SIZES[sizeVal] ? sizeVal : 'medium';
 }
 
 // ---- state transitions ----
@@ -925,6 +1101,7 @@ function startCountdown(){
   document.getElementById('mute').textContent = muted?'♪ OFF':'♪ ON';
   if('ontouchstart' in window) document.getElementById('touch').classList.remove('hidden');
   document.getElementById('count').classList.remove('hidden');
+  applySelectionsFromUI();
   buildTrack(); buildCars();
   position=0; speed=0; playerX=0; lap=1; bestLap=null; raceTime=0; lapStart=0; _prevPos=0;
   draftPower=0; nearMissCount=0; flashText=''; flashTimer=0;
@@ -938,8 +1115,20 @@ function finish(){
   document.getElementById('touch').classList.add('hidden');
   if(eGain) eGain.gain.value=0;
   blip(523,0.16); setTimeout(()=>blip(659,0.16),140); setTimeout(()=>blip(880,0.3),280);
-  document.getElementById('r-title').textContent='FINISH! 🏁';
   const finalRank = currentRank();
+  document.getElementById('r-title').textContent = finalRank===1
+    ? 'CONGRATULATIONS!'
+    : finalRank<=3 ? 'PODIUM FINISH!' : 'RACE COMPLETE';
+  document.querySelectorAll('.podium-racer').forEach(el=>el.classList.remove('is-player'));
+  const badge=document.getElementById('podiumPlayerBadge');
+  badge.classList.remove('show');
+  if(finalRank<=3){
+    const racer=document.getElementById('podium-racer-'+finalRank);
+    if(racer) racer.classList.add('is-player');
+    const badgePos={1:[386,40],2:[263,91],3:[508,130]}[finalRank];
+    badge.setAttribute('x',badgePos[0]); badge.setAttribute('y',badgePos[1]);
+    badge.classList.add('show');
+  }
   document.getElementById('r-stats').innerHTML =
     'TOTAL TIME &nbsp;<b>'+raceTime.toFixed(1)+'s</b><br>'+
     'BEST LAP &nbsp;&nbsp;&nbsp;<b>'+(bestLap!==null?bestLap.toFixed(1):'--.-')+'s</b><br>'+
