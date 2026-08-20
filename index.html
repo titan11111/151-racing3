@@ -26,6 +26,20 @@
   #topbar .cell{background:rgba(10,4,16,.45);border:1px solid rgba(255,46,136,.5);border-radius:8px;padding:6px 12px;backdrop-filter:blur(3px);}
   #topbar .lab{font-size:10px;letter-spacing:2px;color:var(--neon);display:block;}
   #topbar .num{font-size:clamp(16px,3.4vw,24px);font-weight:bold;}
+  #raceTech{position:absolute;top:calc(72px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;align-items:stretch;gap:8px;color:#fff;font-family:"Courier New",monospace;}
+  .tech-chip{min-width:112px;padding:6px 9px;border:1px solid rgba(0,229,255,.55);background:linear-gradient(110deg,rgba(10,4,16,.78),rgba(0,229,255,.10));clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%);backdrop-filter:blur(4px);}
+  .tech-chip .tech-label{display:block;color:var(--neon2);font-size:8px;letter-spacing:2px;line-height:1;}
+  #ghostMeter{display:block;margin-top:4px;font-size:13px;font-weight:bold;letter-spacing:1px;white-space:nowrap;}
+  #ghostMeter.ahead{color:#7cff5a;text-shadow:0 0 9px #7cff5a;}#ghostMeter.behind{color:var(--neon);text-shadow:0 0 9px var(--neon);}
+  #boostGauge{width:138px;}
+  .boost-track{position:relative;height:9px;margin-top:7px;border:1px solid rgba(255,211,78,.7);background:rgba(0,0,0,.5);overflow:hidden;transform:skewX(-12deg);}
+  #boostFill{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--neon),var(--gold),#fff);box-shadow:0 0 14px var(--gold);transition:width .08s linear;}
+  #boostGauge.ready{border-color:var(--gold);box-shadow:0 0 15px rgba(255,211,78,.35);animation:boostReady .6s ease-in-out infinite alternate;}
+  #boostGauge.active{border-color:#fff;background:rgba(255,46,136,.25);box-shadow:0 0 22px var(--neon);}
+  #comboText{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:5px;color:var(--gold);font:bold 11px "Courier New",monospace;letter-spacing:2px;text-shadow:0 0 10px var(--neon);white-space:nowrap;}
+  @keyframes boostReady{from{filter:brightness(1)}to{filter:brightness(1.45)}}
+  @media(max-width:560px){#raceTech{top:calc(84px + env(safe-area-inset-top));gap:4px}.tech-chip{min-width:92px;padding:5px 7px}#boostGauge{width:112px}#ghostMeter{font-size:11px}}
+  @media(max-height:520px){#raceTech{top:calc(68px + env(safe-area-inset-top));transform:translateX(-50%) scale(.84);transform-origin:top center}}
 
   /* ---- overlays ---- */
   .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;background:radial-gradient(ellipse at 50% 40%,rgba(42,10,58,.6),rgba(10,4,16,.92));backdrop-filter:blur(2px);}
@@ -125,9 +139,13 @@
   #padR{right:0;justify-content:flex-end;padding-right:calc(18px + env(safe-area-inset-right));}
   .gaspad{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(120px + env(safe-area-inset-bottom));width:84px;height:84px;border-radius:50%;pointer-events:auto;background:rgba(255,46,136,.16);border:2px solid rgba(255,46,136,.6);color:var(--neon);font-family:"Courier New",monospace;font-weight:bold;display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:1px;}
   #brakepad{left:calc(18px + env(safe-area-inset-left));bottom:calc(120px + env(safe-area-inset-bottom));right:auto;background:rgba(255,211,78,.14);border-color:rgba(255,211,78,.6);color:var(--gold);}
+  #boostpad{position:absolute;right:calc(106px + env(safe-area-inset-right));bottom:calc(136px + env(safe-area-inset-bottom));width:74px;height:48px;border-radius:9px;pointer-events:auto;border:1.5px solid rgba(255,211,78,.75);background:linear-gradient(135deg,rgba(255,46,136,.32),rgba(255,211,78,.18));color:var(--gold);font:bold 10px "Courier New",monospace;letter-spacing:1px;transform:skewX(-8deg);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(255,211,78,.18);}
+  #boostpad.ready{animation:boostPadPulse .55s ease-in-out infinite alternate;}#boostpad.active{color:#fff;background:var(--neon);box-shadow:0 0 26px var(--neon);}
+  @keyframes boostPadPulse{from{box-shadow:0 0 8px rgba(255,211,78,.25)}to{box-shadow:0 0 22px var(--gold)}}
   @media(hover:hover){#touch{display:none;}}
 
-  #mute{position:absolute;top:calc(14px + env(safe-area-inset-top));right:50%;transform:translateX(50%);pointer-events:auto;cursor:pointer;background:rgba(10,4,16,.5);border:1px solid rgba(0,229,255,.5);color:var(--neon2);font-family:"Courier New",monospace;border-radius:8px;padding:6px 10px;font-size:12px;}
+  #mute{position:absolute;top:calc(72px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right));pointer-events:auto;cursor:pointer;background:rgba(10,4,16,.5);border:1px solid rgba(0,229,255,.5);color:var(--neon2);font-family:"Courier New",monospace;border-radius:8px;padding:6px 10px;font-size:12px;}
+  @media(max-width:560px){#boostpad{right:50%;bottom:calc(226px + env(safe-area-inset-bottom));transform:translateX(50%) skewX(-8deg)}#mute{font-size:10px;padding:4px 7px;top:calc(64px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right))}}
 </style>
     <meta property="og:title" content="SUNSET DRIFT — 疑似3Dレーサー">
     <meta property="og:description" content="スマホ・PCのブラウザで遊べる無料ゲームです。インストール不要！">
@@ -148,6 +166,11 @@
       <div class="cell"><span class="lab">RANK</span><span class="num" id="t-rank">--</span></div>
     </div>
     <div id="speedo" class="hud-box"><span class="v" id="t-spd">0</span><br><span class="u">KM/H</span></div>
+    <div id="raceTech">
+      <div class="tech-chip"><span class="tech-label">BEST GHOST</span><span id="ghostMeter">NO DATA</span></div>
+      <div class="tech-chip" id="boostGauge"><span class="tech-label">NITRO CHARGE</span><div class="boost-track"><i id="boostFill"></i></div></div>
+      <div id="comboText"></div>
+    </div>
     <div id="mute">♪ ON</div>
   </div>
 
@@ -157,6 +180,7 @@
     <div id="padR" class="pad"><div class="ico">▶</div></div>
     <div id="brakepad" class="gaspad">BRAKE</div>
     <div id="gaspad" class="gaspad">GAS</div>
+    <div id="boostpad">BOOST</div>
   </div>
 
   <!-- countdown -->
@@ -188,8 +212,8 @@
       </div>
       <button class="btn" id="startBtn">▶ START RACE</button>
       <div class="sub">
-        <b>PC:</b> ← → ステア / ↑ アクセル / ↓ ブレーキ<br>
-        <b>スマホ:</b> 画面左右でステア・GAS/BRAKE<br>
+        <b>PC:</b> ← → ステア / ↑ アクセル / ↓ ブレーキ / SHIFT ブースト<br>
+        <b>スマホ:</b> 画面左右でステア・GAS/BRAKE/BOOST<br>
         3周のベストラップを狙え。コースアウトは減速。
       </div>
     </div>
@@ -290,6 +314,8 @@ const DECEL        = -MAXSPEED / 4.5;
 const OFF_DECEL    = -MAXSPEED / 1.9;
 const OFF_LIMIT    = MAXSPEED / 3.4;
 const KMH_SCALE    = 330 / MAXSPEED;        // display speed factor
+const BOOST_MAXSPEED = MAXSPEED * 1.18;
+const GHOST_SAMPLE_STEP = 0.05;              // 20Hz keeps replay smooth and storage compact
 
 let W = 0, H = 0, dpr = 1, camDepth = 1 / Math.tan((FOV/2)*Math.PI/180);
 
@@ -317,9 +343,10 @@ let jumpTimer = 0, jumpDuration = 0, jumpLift = 0, airLift = 0, splashTimer = 0;
 let lastHazardSeg = -1;
 let selectedTrack = TRACK_TYPES.CLASSIC;
 let selectedCarSize = 'medium';
+let ghostData = null, ghostLapSamples = [], ghostSampleTimer = 0, ghostCursor = 0;
+let boostEnergy = 0, boostActive = false, comboCount = 0, comboTimer = 0, bestCombo = 0;
 
-// hi-score (best lap) persists only in-memory per spec
-const keys = { left:false, right:false, gas:false, brake:false };
+const keys = { left:false, right:false, gas:false, brake:false, boost:false };
 
 // ---- audio (web audio engine hum) ----
 let actx = null, eOsc=null, eGain=null, eFilter=null, muted=(localStorage.getItem('sunset_drift_muted')==='1');
@@ -337,10 +364,10 @@ function initAudio(){
 function unlockAudio(){ initAudio(); if(actx&&actx.state==='suspended') actx.resume(); }
 function engineSound(){
   if(!actx||muted||state!=='play'){ if(eGain) eGain.gain.value=0; return; }
-  const p = speed/MAXSPEED;
+  const p = Math.min(1.2,speed/MAXSPEED);
   eOsc.frequency.value = 55 + p*210;
-  eFilter.frequency.value = 350 + p*1600;
-  eGain.gain.value = 0.018 + p*0.05;
+  eFilter.frequency.value = 350 + p*1600 + (boostActive?900:0);
+  eGain.gain.value = 0.018 + p*0.05 + (boostActive?0.018:0);
 }
 function blip(freq,dur,type){
   if(!actx||muted) return;
@@ -361,6 +388,64 @@ function limit(v,mn,mx){ return Math.max(mn,Math.min(v,mx)); }
 function expFog(d,density){ return 1/Math.pow(Math.E,(d*d*density)); }
 function pct(z,len){ return (z%len)/len; }
 function findSeg(z){ return segments[Math.floor(z/SEG_LEN)%segments.length]; }
+
+// ---- best-lap ghost (course-specific local replay) ----
+function ghostStorageKey(){ return 'sunset_drift_ghost_v1_'+selectedTrack; }
+function loadGhost(){
+  ghostData=null; ghostCursor=0;
+  try{
+    const saved=JSON.parse(localStorage.getItem(ghostStorageKey())||'null');
+    if(saved&&saved.v===1&&saved.track===selectedTrack&&saved.lapTime>0&&Array.isArray(saved.samples)&&saved.samples.length>8){
+      ghostData=saved;
+      if(bestLap===null||saved.lapTime<bestLap) bestLap=saved.lapTime;
+    }
+  }catch(_){ ghostData=null; }
+}
+function saveGhost(lapTime,samples){
+  if(!samples||samples.length<8) return;
+  const compact=samples.map(s=>({t:+s.t.toFixed(3),p:+s.p.toFixed(5),x:+s.x.toFixed(4)}));
+  ghostData={v:1,track:selectedTrack,lapTime:+lapTime.toFixed(3),samples:compact};
+  try{ localStorage.setItem(ghostStorageKey(),JSON.stringify(ghostData)); }catch(_){ /* race continues if storage is full */ }
+}
+function sampleGhostAtTime(t){
+  if(!ghostData||t<0||t>ghostData.lapTime||ghostData.samples.length<2) return null;
+  const a=ghostData.samples;
+  if(ghostCursor>=a.length-1||a[ghostCursor].t>t) ghostCursor=0;
+  while(ghostCursor<a.length-2&&a[ghostCursor+1].t<t) ghostCursor++;
+  const s1=a[ghostCursor],s2=a[Math.min(a.length-1,ghostCursor+1)];
+  const f=limit((t-s1.t)/Math.max(0.001,s2.t-s1.t),0,1);
+  return {t,p:lerp(s1.p,s2.p,f),x:lerp(s1.x,s2.x,f)};
+}
+function sampleGhostAtProgress(p){
+  if(!ghostData||ghostData.samples.length<2) return null;
+  const a=ghostData.samples;
+  let lo=0,hi=a.length-1;
+  while(lo<hi){ const mid=(lo+hi)>>1; if(a[mid].p<p) lo=mid+1; else hi=mid; }
+  const s2=a[Math.min(a.length-1,lo)],s1=a[Math.max(0,lo-1)];
+  const f=limit((p-s1.p)/Math.max(0.00001,s2.p-s1.p),0,1);
+  return {t:lerp(s1.t,s2.t,f),p,x:lerp(s1.x,s2.x,f)};
+}
+function attachGhost(){
+  const frame=sampleGhostAtTime(raceTime-lapStart);
+  if(!frame) return;
+  const z=(frame.p*trackLen+PLAYER_Z)%trackLen;
+  findSeg(z).cars.push({offset:frame.x,z,_pct:pct(z,SEG_LEN),color:'#00e5ff',w:1,isGhost:true,isRival:false});
+}
+function recordGhostSample(dt){
+  ghostSampleTimer-=dt;
+  if(ghostSampleTimer>0) return;
+  ghostSampleTimer=GHOST_SAMPLE_STEP;
+  ghostLapSamples.push({t:raceTime-lapStart,p:position/trackLen,x:playerX});
+}
+
+// ---- stunt-fed neon boost ----
+function awardBoost(amount,label){
+  comboCount = comboTimer>0 ? comboCount+1 : 1;
+  comboTimer=2.6; bestCombo=Math.max(bestCombo,comboCount);
+  boostEnergy=limit(boostEnergy+amount+Math.min(8,(comboCount-1)*2),0,100);
+  flashText=label+'  x'+comboCount;
+  flashTimer=0.62;
+}
 
 // ---- build track ----
 function lastY(){ return segments.length===0 ? 0 : segments[segments.length-1].p2.world.y; }
@@ -738,7 +823,18 @@ function render(){
       let enemyFactor = 0.28;
       if(scale>0.09) enemyFactor -= Math.min(0.05, (scale-0.09)*0.9);
       const cw  = scale*ROAD_W*W*enemyFactor;
-      if(syp<=s.clip) drawCar(sxp, syp, cw, car.color, false, car.isRival);
+      if(syp<=s.clip){
+        if(car.isGhost){
+          ctx.save();
+          ctx.globalAlpha=.42; ctx.globalCompositeOperation='screen';
+          ctx.shadowColor='#00e5ff'; ctx.shadowBlur=Math.max(8,cw*.12);
+          drawCar(sxp,syp,cw,car.color,false,false);
+          if(cw>26){ ctx.fillStyle='#dfffff'; ctx.font='bold '+Math.max(8,cw*.09)+'px Courier New'; ctx.textAlign='center'; ctx.fillText('GHOST',sxp,syp-cw*.72); }
+          ctx.restore();
+        }else{
+          drawCar(sxp,syp,cw,car.color,false,car.isRival);
+        }
+      }
     }
   }
 
@@ -749,6 +845,17 @@ function render(){
   ctx.save();
   ctx.translate(W/2 + steerTilt*pcw*0.12, H*0.86 + bounce - airLift);
   ctx.rotate(steerTilt*0.06);
+  if(boostActive){
+    ctx.save(); ctx.globalCompositeOperation='screen'; ctx.shadowColor='#00e5ff'; ctx.shadowBlur=22;
+    const flame=pcw*(.28+Math.random()*.14);
+    ctx.fillStyle='#00e5ff';
+    ctx.beginPath(); ctx.moveTo(-pcw*.28,-pcw*.02);ctx.lineTo(-pcw*.16,flame);ctx.lineTo(-pcw*.05,-pcw*.02);ctx.fill();
+    ctx.beginPath(); ctx.moveTo(pcw*.05,-pcw*.02);ctx.lineTo(pcw*.16,flame);ctx.lineTo(pcw*.28,-pcw*.02);ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath();ctx.moveTo(-pcw*.23,0);ctx.lineTo(-pcw*.16,flame*.62);ctx.lineTo(-pcw*.1,0);ctx.fill();
+    ctx.beginPath();ctx.moveTo(pcw*.1,0);ctx.lineTo(pcw*.16,flame*.62);ctx.lineTo(pcw*.23,0);ctx.fill();
+    ctx.restore();
+  }
   drawCar(0, 0, pcw, '#ff2e88', true, false);
   ctx.restore();
   if(splashTimer>0){
@@ -770,7 +877,7 @@ function render(){
   if(speed>MAXSPEED*0.55){
     ctx.strokeStyle='rgba(255,255,255,'+((speed/MAXSPEED)-0.5)*0.5+')';
     ctx.lineWidth=2;
-    for(let i=0;i<10;i++){
+    for(let i=0;i<(boostActive?22:10);i++){
       const a=rnd(0,Math.PI*2), r1=Math.min(W,H)*0.2, r2=r1+rnd(40,120);
       ctx.beginPath();
       ctx.moveTo(W/2+Math.cos(a)*r1, H*0.5+Math.sin(a)*r1);
@@ -896,8 +1003,7 @@ function update(dt){
         jumpLift = 28 + 44*(speed/MAXSPEED)*hazard.strength;
         speed = accel(speed, MAXSPEED*0.17*hazard.strength, 0.12);
         shake = Math.max(shake, 2.8);
-        flashText='JUMP!';
-        flashTimer=0.45;
+        awardBoost(10,'AIR');
         blip(760,0.1,'square');
         lastHazardSeg = pSeg.index;
       }
@@ -951,8 +1057,21 @@ function update(dt){
   if(draftFactor>0){
     draftPower = Math.min(1, draftPower + dt*1.8*draftFactor);
     speed = accel(speed, ACCEL*0.58*draftPower, dt);
+    boostEnergy = limit(boostEnergy + dt*7*draftFactor,0,100);
   }else{
     draftPower = Math.max(0, draftPower-dt*2.5);
+  }
+
+  // Hold BOOST to spend the energy earned from skilled driving.
+  const wasBoosting=boostActive;
+  boostActive=keys.boost&&boostEnergy>0.2;
+  if(boostActive){
+    boostEnergy=Math.max(0,boostEnergy-dt*31);
+    speed=accel(speed,ACCEL*1.42,dt);
+    shake=Math.max(shake,1.8);
+    if(!wasBoosting){ blip(180,0.08,'sawtooth'); setTimeout(()=>blip(620,0.12,'square'),55); }
+  }else if(speed>MAXSPEED){
+    speed=accel(speed,-MAXSPEED*.78,dt);
   }
 
   // off-road
@@ -970,6 +1089,7 @@ function update(dt){
     const laneDist = Math.abs(playerX-car.offset);
     const overlapNow = overlap(playerX,pw,car.offset,cw,0.88);
     if(overlapNow){
+      comboCount=0; comboTimer=0;
       const sidePush = Math.sign((playerX-car.offset) || rnd(-1,1));
       if(relZ > SEG_LEN*0.14 && speed > car.speed+MAXSPEED*0.02){
         // rear impact
@@ -990,26 +1110,35 @@ function update(dt){
     if(car.nearCooldown<=0 && relZ>-SEG_LEN*0.16 && relZ<SEG_LEN*0.34 && laneDist>0.56 && laneDist<0.88 && speed>MAXSPEED*0.38){
       nearMissCount++;
       car.nearCooldown = 0.9;
-      flashText = 'NEAR MISS +' + 1;
-      flashTimer = 0.55;
+      awardBoost(14,'NEAR MISS');
       speed = accel(speed, ACCEL*0.2, dt);
       blip(950,0.08,'square');
     }
   }
 
   playerX=limit(playerX,-2.2,2.2);
-  speed=limit(speed,0,MAXSPEED);
+  speed=limit(speed,0,BOOST_MAXSPEED);
+  comboTimer=Math.max(0,comboTimer-dt);
+  if(comboTimer===0) comboCount=0;
   shake=Math.max(0,shake-dt*22);
   flashTimer=Math.max(0,flashTimer-dt);
   splashTimer=Math.max(0,splashTimer-dt);
 
   // lap timing
   raceTime+=dt;
+  const crossedFinish=_prevPos>trackLen*0.9&&position<trackLen*0.1;
+  if(!crossedFinish) recordGhostSample(dt);
   // detect crossing finish (position wraps to near 0)
-  if(_prevPos>trackLen*0.9 && position<trackLen*0.1){
+  if(crossedFinish){
     const lt=raceTime-lapStart;
-    if(lap>=1 && (bestLap===null||lt<bestLap)){ bestLap=lt; }
+    const isBest=lap>=1&&(bestLap===null||lt<bestLap);
+    if(isBest){
+      bestLap=lt;
+      saveGhost(lt,ghostLapSamples.concat({t:lt,p:1,x:playerX}));
+      flashText='NEW BEST GHOST'; flashTimer=1.15;
+    }
     lapStart=raceTime;
+    ghostLapSamples=[{t:0,p:0,x:playerX}]; ghostSampleTimer=0; ghostCursor=0;
     lap++;
     blip(880,0.12,'square'); setTimeout(()=>blip(1180,0.14,'square'),90);
     if(lap===TOTAL_LAPS){
@@ -1020,6 +1149,7 @@ function update(dt){
     if(lap>TOTAL_LAPS){ finish(); }
   }
   _prevPos=position;
+  if(state==='play') attachGhost();
   engineSound();
 }
 let _prevPos=0;
@@ -1049,6 +1179,25 @@ function updateHUD(){
   }else{
     document.getElementById('t-rank').textContent = rank+'/'+(N_CARS+1);
   }
+  const ghostMeter=document.getElementById('ghostMeter');
+  ghostMeter.classList.remove('ahead','behind');
+  if(ghostData){
+    const ref=sampleGhostAtProgress(position/trackLen);
+    if(ref){
+      const delta=(raceTime-lapStart)-ref.t;
+      const ahead=delta<=0;
+      ghostMeter.textContent=(ahead?'AHEAD ':'BEHIND ')+(ahead?'−':'+')+Math.abs(delta).toFixed(2)+'s';
+      ghostMeter.classList.add(ahead?'ahead':'behind');
+    }
+  }else ghostMeter.textContent='NO DATA';
+  document.getElementById('boostFill').style.width=boostEnergy.toFixed(1)+'%';
+  const boostGauge=document.getElementById('boostGauge');
+  boostGauge.classList.toggle('ready',boostEnergy>=25&&!boostActive);
+  boostGauge.classList.toggle('active',boostActive);
+  const boostPad=document.getElementById('boostpad');
+  boostPad.classList.toggle('ready',boostEnergy>=25&&!boostActive);
+  boostPad.classList.toggle('active',boostActive);
+  document.getElementById('comboText').textContent=comboTimer>0&&comboCount>1?'SKILL CHAIN x'+comboCount:'';
   document.getElementById('mute').textContent = (muted?'♪ OFF':'♪ ON') + (draftPower>0.2 ? '  DRAFT' : '');
 }
 
@@ -1104,7 +1253,10 @@ function startCountdown(){
   applySelectionsFromUI();
   buildTrack(); buildCars();
   position=0; speed=0; playerX=0; lap=1; bestLap=null; raceTime=0; lapStart=0; _prevPos=0;
+  loadGhost();
   draftPower=0; nearMissCount=0; flashText=''; flashTimer=0;
+  ghostLapSamples=[{t:0,p:0,x:0}]; ghostSampleTimer=0; ghostCursor=0;
+  boostEnergy=0; boostActive=false; comboCount=0; comboTimer=0; bestCombo=0;
   jumpTimer=0; jumpDuration=0; jumpLift=0; airLift=0; splashTimer=0; lastHazardSeg=-1;
   countN=3; countT=1; document.getElementById('count-n').textContent='3';
   state='count'; initAudio(); if(actx&&actx.state==='suspended') actx.resume();
@@ -1133,7 +1285,8 @@ function finish(){
     'TOTAL TIME &nbsp;<b>'+raceTime.toFixed(1)+'s</b><br>'+
     'BEST LAP &nbsp;&nbsp;&nbsp;<b>'+(bestLap!==null?bestLap.toFixed(1):'--.-')+'s</b><br>'+
     'FINAL RANK &nbsp;<b>'+finalRank+' / '+(N_CARS+1)+'</b><br>'+
-    'NEAR MISS &nbsp;&nbsp;<b>'+nearMissCount+'</b>';
+    'NEAR MISS &nbsp;&nbsp;<b>'+nearMissCount+'</b><br>'+
+    'MAX CHAIN &nbsp;&nbsp;<b>x'+bestCombo+'</b>';
   document.getElementById('result').classList.remove('hidden');
 }
 
@@ -1149,17 +1302,19 @@ function resize(){
 
 // ---- input ----
 addEventListener('keydown',e=>{
-  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key)) e.preventDefault();
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','Shift'].includes(e.key)) e.preventDefault();
   if(e.key==='ArrowLeft'||e.key==='a') keys.left=true;
   if(e.key==='ArrowRight'||e.key==='d') keys.right=true;
   if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') keys.gas=true;
   if(e.key==='ArrowDown'||e.key==='s') keys.brake=true;
+  if(e.key==='Shift'||e.key.toLowerCase()==='b') keys.boost=true;
 });
 addEventListener('keyup',e=>{
   if(e.key==='ArrowLeft'||e.key==='a') keys.left=false;
   if(e.key==='ArrowRight'||e.key==='d') keys.right=false;
   if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') keys.gas=false;
   if(e.key==='ArrowDown'||e.key==='s') keys.brake=false;
+  if(e.key==='Shift'||e.key.toLowerCase()==='b') keys.boost=false;
 });
 let lastTouch=0;
 addEventListener('touchstart',e=>{ const now=Date.now(); if(now-lastTouch<300) e.preventDefault(); lastTouch=now; unlockAudio(); },{passive:false});
@@ -1176,9 +1331,10 @@ bindHold(document.getElementById('padL'),()=>keys.left=true, ()=>keys.left=false
 bindHold(document.getElementById('padR'),()=>keys.right=true,()=>keys.right=false);
 bindHold(document.getElementById('gaspad'),()=>keys.gas=true, ()=>keys.gas=false);
 bindHold(document.getElementById('brakepad'),()=>keys.brake=true,()=>keys.brake=false);
+bindHold(document.getElementById('boostpad'),()=>keys.boost=true,()=>keys.boost=false);
 // auto-gas assist on touch (hold screen middle not needed; gas pad provided)
 
-function resetInputs(){ keys.left=false; keys.right=false; keys.gas=false; keys.brake=false; }
+function resetInputs(){ keys.left=false; keys.right=false; keys.gas=false; keys.brake=false; keys.boost=false; }
 addEventListener('blur',resetInputs);
 addEventListener('pagehide',resetInputs);
 addEventListener('visibilitychange',()=>{ if(document.visibilityState!=='visible') resetInputs(); else unlockAudio(); });
