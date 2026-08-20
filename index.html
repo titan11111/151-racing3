@@ -10,7 +10,7 @@
     --neon:#ff2e88; --neon2:#00e5ff; --gold:#ffd34e; --ink:#0a0410;
     --grid:#ff2e88;
   }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;user-select:none;touch-action:none;}
   html,body{height:100%;width:100%;overflow:hidden;overscroll-behavior:none;position:fixed;background:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
   #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#2a0a3a,#0a0410 70%);}
   #wrap{position:relative;width:100%;height:100%;max-width:1100px;max-height:100vh;}
@@ -20,6 +20,8 @@
   #hud{position:absolute;inset:0;pointer-events:none;font-family:"Courier New",monospace;}
   .hud-box{position:absolute;color:#fff;text-shadow:0 0 8px rgba(0,229,255,.7),0 2px 4px #000;}
   #speedo{right:calc(18px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));text-align:right;}
+  #wrap.touch-on #speedo{bottom:calc(25% + 8px);}
+  #wrap.touch-on #speedo .v{font-size:clamp(32px,7vw,64px);}
   #speedo .v{font-size:clamp(40px,9vw,84px);font-weight:bold;line-height:.9;letter-spacing:-2px;color:#fff;text-shadow:0 0 14px var(--neon2),0 0 26px var(--neon2);}
   #speedo .u{font-size:14px;letter-spacing:3px;color:var(--neon2);}
   #topbar{top:calc(14px + env(safe-area-inset-top));left:0;right:0;display:flex;justify-content:space-between;padding:0 calc(18px + env(safe-area-inset-right)) 0 calc(18px + env(safe-area-inset-left));font-size:clamp(12px,2.6vw,18px);}
@@ -42,14 +44,14 @@
   @media(max-height:520px){#raceTech{top:calc(68px + env(safe-area-inset-top));transform:translateX(-50%) scale(.84);transform-origin:top center}}
 
   /* ---- overlays ---- */
-  .screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;background:radial-gradient(ellipse at 50% 40%,rgba(42,10,58,.6),rgba(10,4,16,.92));backdrop-filter:blur(2px);}
+  .screen{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;background:radial-gradient(ellipse at 50% 40%,rgba(42,10,58,.6),rgba(10,4,16,.92));backdrop-filter:blur(2px);}
   .hidden{display:none!important;}
   .logo{font-family:"Arial Black","Impact",sans-serif;font-weight:900;font-style:italic;line-height:.92;letter-spacing:-2px;}
   .logo .l1{display:block;font-size:clamp(40px,11vw,104px);color:var(--gold);text-shadow:0 0 18px var(--gold),0 6px 0 #b46b00;-webkit-text-stroke:2px #3a1500;}
   .logo .l2{display:block;font-size:clamp(54px,15vw,150px);background:linear-gradient(180deg,#fff 0%,var(--neon) 55%,#7a0040 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(255,46,136,.55);-webkit-text-stroke:1px rgba(255,255,255,.2);}
   .tag{margin-top:14px;font-family:"Courier New",monospace;letter-spacing:6px;font-size:clamp(11px,2.6vw,15px);color:var(--neon2);text-shadow:0 0 10px var(--neon2);}
-  .btn{margin-top:30px;pointer-events:auto;cursor:pointer;border:none;font-family:"Courier New",monospace;font-weight:bold;letter-spacing:3px;font-size:clamp(16px,4vw,22px);color:#0a0410;padding:16px 42px;border-radius:50px;background:linear-gradient(135deg,var(--gold),var(--neon));box-shadow:0 0 26px rgba(255,46,136,.6),0 8px 0 #6b0030;transition:transform .08s,box-shadow .2s;}
-  .btn:active{transform:translateY(4px);box-shadow:0 0 26px rgba(255,46,136,.6),0 4px 0 #6b0030;}
+  .btn{margin-top:30px;pointer-events:auto;cursor:pointer;border:none;font-family:"Courier New",monospace;font-weight:bold;letter-spacing:3px;font-size:clamp(16px,4vw,22px);color:#0a0410;padding:16px 42px;min-height:56px;border-radius:50px;background:linear-gradient(135deg,var(--gold),var(--neon));box-shadow:0 0 26px rgba(255,46,136,.6),0 8px 0 #6b0030;transition:transform .08s ease,box-shadow .08s ease,opacity .08s ease;touch-action:manipulation;}
+  .btn:active,.btn.is-pressed{transform:translateY(4px) scale(.98);box-shadow:0 0 26px rgba(255,46,136,.6),0 4px 0 #6b0030;opacity:.88;}
   .sub{margin-top:22px;font-family:"Courier New",monospace;font-size:13px;color:#cbb;line-height:1.9;opacity:.9;}
   .sub b{color:var(--gold);}
   .opts{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;pointer-events:auto}
@@ -132,25 +134,84 @@
   @media(max-width:520px){#result .big{font-size:clamp(22px,7.2vw,30px);letter-spacing:-1px;white-space:nowrap}.podium-wrap{width:96vw}}
 
   /* ---- countdown ---- */
-  #count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+  #count{position:absolute;inset:0;z-index:45;display:flex;align-items:center;justify-content:center;pointer-events:none;}
   #count span{font-family:"Arial Black",sans-serif;font-style:italic;font-size:clamp(90px,30vw,260px);color:#fff;text-shadow:0 0 40px var(--neon),0 0 80px var(--neon);animation:pop .9s ease-out;}
   @keyframes pop{0%{transform:scale(2.4);opacity:0}30%{opacity:1}100%{transform:scale(.7);opacity:0}}
 
-  /* ---- touch controls ---- */
-  #touch{position:absolute;inset:0;pointer-events:none;padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
-  .pad{position:absolute;bottom:0;width:42%;height:46%;pointer-events:auto;display:flex;align-items:flex-end;}
-  .pad .ico{width:64px;height:64px;margin:0 0 26px 0;border-radius:18px;background:rgba(0,229,255,.12);border:1.5px solid rgba(0,229,255,.5);display:flex;align-items:center;justify-content:center;color:var(--neon2);font-size:30px;backdrop-filter:blur(2px);}
-  #padL{left:0;justify-content:flex-start;padding-left:calc(18px + env(safe-area-inset-left));}
-  #padR{right:0;justify-content:flex-end;padding-right:calc(18px + env(safe-area-inset-right));}
-  .gaspad{position:absolute;right:calc(18px + env(safe-area-inset-right));bottom:calc(120px + env(safe-area-inset-bottom));width:84px;height:84px;border-radius:50%;pointer-events:auto;background:rgba(255,46,136,.16);border:2px solid rgba(255,46,136,.6);color:var(--neon);font-family:"Courier New",monospace;font-weight:bold;display:flex;align-items:center;justify-content:center;font-size:13px;letter-spacing:1px;}
-  #brakepad{left:calc(18px + env(safe-area-inset-left));bottom:calc(120px + env(safe-area-inset-bottom));right:auto;background:rgba(255,211,78,.14);border-color:rgba(255,211,78,.6);color:var(--gold);}
-  #boostpad{position:absolute;right:calc(106px + env(safe-area-inset-right));bottom:calc(136px + env(safe-area-inset-bottom));width:74px;height:48px;border-radius:9px;pointer-events:auto;border:1.5px solid rgba(255,211,78,.75);background:linear-gradient(135deg,rgba(255,46,136,.32),rgba(255,211,78,.18));color:var(--gold);font:bold 10px "Courier New",monospace;letter-spacing:1px;transform:skewX(-8deg);display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(255,211,78,.18);}
-  #boostpad.ready{animation:boostPadPulse .55s ease-in-out infinite alternate;}#boostpad.active{color:#fff;background:var(--neon);box-shadow:0 0 26px var(--neon);}
+  /* INPUT RULE (mobile): dock = bottom 25% of play screen.
+     LEFT = D-pad (steer; up=gas, down=brake). RIGHT = GAS / BRAKE / BOOST. */
+  #touch{
+    position:absolute;left:0;right:0;bottom:0;height:25%;z-index:30;
+    pointer-events:none;display:flex;align-items:flex-end;justify-content:space-between;
+    padding:4px max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+    background:linear-gradient(to top,rgba(10,4,16,.58),rgba(10,4,16,.14) 70%,transparent);
+    --ctl:min(38vw, calc(25vh - 10px), 148px);
+  }
+  @media (orientation:landscape) and (max-height:500px){
+    #touch{height:max(25%, calc(112px + env(safe-area-inset-bottom)));--ctl:min(24vw,104px);}
+  }
+  .dpad{
+    position:relative;width:var(--ctl);height:var(--ctl);flex:0 0 var(--ctl);
+    pointer-events:auto;touch-action:none;cursor:pointer;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,rgba(0,229,255,.24),rgba(10,4,16,.86) 64%);
+    border:1.5px solid rgba(0,229,255,.58);
+    box-shadow:0 0 14px rgba(0,229,255,.2), inset 0 0 12px rgba(0,0,0,.5);
+  }
+  .dpad > *{pointer-events:none;}
+  .dpad-bar{position:absolute;border-radius:18%;background:linear-gradient(145deg,rgba(0,229,255,.38),rgba(10,4,16,.9));box-shadow:inset 1px 1px rgba(255,255,255,.16),inset -2px -2px rgba(0,0,0,.45);}
+  .dpad-bar-x{left:12%;right:12%;top:50%;height:30%;transform:translateY(-50%);}
+  .dpad-bar-y{top:12%;bottom:12%;left:50%;width:30%;transform:translateX(-50%);}
+  .dpad-mark{position:absolute;z-index:1;color:rgba(0,229,255,.85);font:800 13px/1 "Courier New",monospace;text-shadow:0 0 8px var(--neon2);}
+  .dpad-mark-up{top:9%;left:50%;transform:translateX(-50%);}
+  .dpad-mark-down{bottom:8%;left:50%;transform:translateX(-50%);}
+  .dpad-mark-left{left:11%;top:50%;transform:translateY(-50%);}
+  .dpad-mark-right{right:11%;top:50%;transform:translateY(-50%);}
+  .dpad-nub{position:absolute;z-index:2;left:50%;top:50%;width:26%;height:26%;margin:-13% 0 0 -13%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7ff6ff,#12343c 72%);box-shadow:inset 2px 2px rgba(255,255,255,.28),0 0 8px rgba(0,229,255,.35);}
+  .dpad.is-up .dpad-mark-up,.dpad.is-down .dpad-mark-down,.dpad.is-left .dpad-mark-left,.dpad.is-right .dpad-mark-right{color:#fff;}
+  .dpad.is-pressed{border-color:#fff;box-shadow:0 0 18px var(--neon2);}
+  .dpad.is-pressed .dpad-bar{filter:brightness(1.25);}
+  .action-cluster{position:relative;width:var(--ctl);height:var(--ctl);flex:0 0 var(--ctl);pointer-events:none;}
+  .game-btn{
+    pointer-events:auto;cursor:pointer;border:0;touch-action:manipulation;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:"Courier New",monospace;font-weight:bold;letter-spacing:1px;color:#fff;
+    min-width:48px;min-height:48px;
+    transition:transform .08s ease,opacity .08s ease,filter .08s ease,box-shadow .08s ease;
+    will-change:transform;-webkit-user-select:none;user-select:none;
+  }
+  .game-btn small{display:block;margin-top:2px;font-size:8px;letter-spacing:1px;opacity:.85;font-weight:bold;}
+  .game-btn:active,.game-btn.is-pressed{transform:scale(.92);opacity:.88;}
+  .act-gas{
+    position:absolute;right:0;bottom:0;width:58%;height:58%;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,#ff7ab3,rgba(255,46,136,.92) 62%,#6b0030);
+    border:2px solid rgba(255,46,136,.95);color:#fff;
+    box-shadow:0 0 16px rgba(255,46,136,.45), inset 2px 2px rgba(255,255,255,.22);
+    font-size:12px;
+  }
+  .act-gas:active,.act-gas.is-pressed{transform:scale(.9) translateY(3px);box-shadow:inset 2px 4px 8px rgba(0,0,0,.45),0 0 10px rgba(255,46,136,.35);}
+  .act-brake{
+    position:absolute;left:0;bottom:6%;width:44%;height:44%;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,#ffe38a,rgba(255,211,78,.9) 64%,#8a5a00);
+    border:2px solid rgba(255,211,78,.95);color:#3a1500;
+    box-shadow:0 0 12px rgba(255,211,78,.35), inset 2px 2px rgba(255,255,255,.22);
+    font-size:9px;
+  }
+  .act-brake:active,.act-brake.is-pressed{transform:scale(.92);box-shadow:inset 2px 3px 7px rgba(0,0,0,.4);}
+  .act-boost{
+    position:absolute;top:0;right:4%;width:54%;height:34%;border-radius:12px;
+    background:linear-gradient(135deg,rgba(255,46,136,.55),rgba(255,211,78,.42));
+    border:1.5px solid rgba(255,211,78,.85);color:var(--gold);
+    box-shadow:0 0 12px rgba(255,211,78,.22);font-size:9px;
+  }
+  .act-boost:active,.act-boost.is-pressed{transform:scale(.92);}
+  #boostpad.ready{animation:boostPadPulse .55s ease-in-out infinite alternate;}
+  #boostpad.active{color:#fff;background:var(--neon);border-color:#fff;box-shadow:0 0 22px var(--neon);}
   @keyframes boostPadPulse{from{box-shadow:0 0 8px rgba(255,211,78,.25)}to{box-shadow:0 0 22px var(--gold)}}
-  @media(hover:hover){#touch{display:none;}}
+  @media (hover:hover) and (pointer:fine){#touch{display:none!important;}#wrap.touch-on #speedo{bottom:calc(16px + env(safe-area-inset-bottom));}}
 
-  #mute{position:absolute;top:calc(72px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right));pointer-events:auto;cursor:pointer;background:rgba(10,4,16,.5);border:1px solid rgba(0,229,255,.5);color:var(--neon2);font-family:"Courier New",monospace;border-radius:8px;padding:6px 10px;font-size:12px;}
-  @media(max-width:560px){#boostpad{right:50%;bottom:calc(226px + env(safe-area-inset-bottom));transform:translateX(50%) skewX(-8deg)}#mute{font-size:10px;padding:4px 7px;top:calc(64px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right))}}
+  #mute{position:absolute;top:calc(72px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right));pointer-events:auto;cursor:pointer;background:rgba(10,4,16,.5);border:1px solid rgba(0,229,255,.5);color:var(--neon2);font-family:"Courier New",monospace;border-radius:8px;padding:6px 10px;font-size:12px;min-height:44px;touch-action:manipulation;transition:transform .08s ease,opacity .08s ease;}
+  #mute:active,#mute.is-pressed{transform:scale(.92);opacity:.88;}
+  @media(max-width:560px){#mute{font-size:10px;padding:4px 7px;min-height:40px;top:calc(64px + env(safe-area-inset-top));right:calc(8px + env(safe-area-inset-right))}}
 </style>
     <meta property="og:title" content="SUNSET DRIFT — 疑似3Dレーサー">
     <meta property="og:description" content="スマホ・PCのブラウザで遊べる無料ゲームです。インストール不要！">
@@ -160,38 +221,7 @@
 </head>
 <body>
 <div id="stage"><div id="wrap">
-  <canvas id="game"></canvas>
-
-  <!-- HUD -->
-  <div id="hud" class="hidden">
-    <div id="topbar" class="hud-box">
-      <div class="cell"><span class="lab">TIME</span><span class="num" id="t-time">0.0</span></div>
-      <div class="cell"><span class="lab">LAP</span><span class="num" id="t-lap">1/3</span></div>
-      <div class="cell"><span class="lab">BEST</span><span class="num" id="t-best">--.-</span></div>
-      <div class="cell"><span class="lab">RANK</span><span class="num" id="t-rank">--</span></div>
-    </div>
-    <div id="speedo" class="hud-box"><span class="v" id="t-spd">0</span><br><span class="u">KM/H</span></div>
-    <div id="raceTech">
-      <div class="tech-chip"><span class="tech-label">BEST GHOST</span><span id="ghostMeter">NO DATA</span></div>
-      <div class="tech-chip" id="boostGauge"><span class="tech-label">NITRO CHARGE</span><div class="boost-track"><i id="boostFill"></i></div></div>
-      <div id="comboText"></div>
-    </div>
-    <div id="mute">♪ ON</div>
-  </div>
-
-  <!-- touch -->
-  <div id="touch" class="hidden">
-    <div id="padL" class="pad"><div class="ico">◀</div></div>
-    <div id="padR" class="pad"><div class="ico">▶</div></div>
-    <div id="brakepad" class="gaspad">BRAKE</div>
-    <div id="gaspad" class="gaspad">GAS</div>
-    <div id="boostpad">BOOST</div>
-  </div>
-
-  <!-- countdown -->
-  <div id="count" class="hidden"><span id="count-n">3</span></div>
-
-  <!-- title -->
+  <!-- title first so harness/tap hits START, not the covered canvas -->
   <div id="title" class="screen">
     <div class="speed-streaks" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="title-shell">
@@ -215,14 +245,35 @@
           </select>
         </label>
       </div>
-      <button class="btn" id="startBtn">▶ START RACE</button>
+      <button type="button" class="btn" id="startBtn">▶ START RACE</button>
       <div class="sub">
         <b>PC:</b> ← → ステア / ↑ アクセル / ↓ ブレーキ / SHIFT ブースト<br>
-        <b>スマホ:</b> 画面左右でステア・GAS/BRAKE/BOOST<br>
+        <b>スマホ:</b> 左・十字キー ／ 右・アクセル・ブレーキ・ブースト<br>
         3周のベストラップを狙え。コースアウトは減速。
       </div>
     </div>
   </div>
+  <canvas id="game"></canvas>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="topbar" class="hud-box">
+      <div class="cell"><span class="lab">TIME</span><span class="num" id="t-time">0.0</span></div>
+      <div class="cell"><span class="lab">LAP</span><span class="num" id="t-lap">1/3</span></div>
+      <div class="cell"><span class="lab">BEST</span><span class="num" id="t-best">--.-</span></div>
+      <div class="cell"><span class="lab">RANK</span><span class="num" id="t-rank">--</span></div>
+    </div>
+    <div id="speedo" class="hud-box"><span class="v" id="t-spd">0</span><br><span class="u">KM/H</span></div>
+    <div id="raceTech">
+      <div class="tech-chip"><span class="tech-label">BEST GHOST</span><span id="ghostMeter">NO DATA</span></div>
+      <div class="tech-chip" id="boostGauge"><span class="tech-label">NITRO CHARGE</span><div class="boost-track"><i id="boostFill"></i></div></div>
+      <div id="comboText"></div>
+    </div>
+    <div id="mute">♪ ON</div>
+  </div>
+
+  <!-- countdown -->
+  <div id="count" class="hidden"><span id="count-n">3</span></div>
 
   <!-- result -->
   <div id="result" class="screen hidden">
@@ -291,6 +342,24 @@
     </div>
     <div class="stats" id="r-stats"></div>
     <button class="btn" id="againBtn">↻ RETRY</button>
+  </div>
+
+  <!-- touch: left D-pad / right action cluster, bottom 25% -->
+  <div id="touch" class="hidden" aria-hidden="true">
+    <div id="dpad" class="dpad" aria-label="十字キー">
+      <span class="dpad-bar dpad-bar-x" aria-hidden="true"></span>
+      <span class="dpad-bar dpad-bar-y" aria-hidden="true"></span>
+      <span class="dpad-mark dpad-mark-up">▲</span>
+      <span class="dpad-mark dpad-mark-left">◀</span>
+      <span class="dpad-mark dpad-mark-right">▶</span>
+      <span class="dpad-mark dpad-mark-down">▼</span>
+      <span class="dpad-nub" aria-hidden="true"></span>
+    </div>
+    <div class="action-cluster" aria-label="操作ボタン">
+      <div id="boostpad" class="game-btn act-boost">BOOST<small>ブースト</small></div>
+      <div id="brakepad" class="game-btn act-brake">BRAKE<small>ブレーキ</small></div>
+      <div id="gaspad" class="game-btn act-gas">GAS<small>アクセル</small></div>
+    </div>
   </div>
 </div></div>
 
@@ -1263,12 +1332,23 @@ function applySelectionsFromUI(){
 }
 
 // ---- state transitions ----
+function isTouchPlay(){
+  return window.matchMedia('(hover: none)').matches || window.matchMedia('(pointer: coarse)').matches;
+}
+function showTouch(on){
+  const use = !!(on && isTouchPlay());
+  const el = document.getElementById('touch');
+  el.classList.toggle('hidden', !use);
+  el.setAttribute('aria-hidden', use ? 'false' : 'true');
+  document.getElementById('wrap').classList.toggle('touch-on', use);
+}
 function startCountdown(){
+  if(state==='count'||state==='play') return;
   document.getElementById('title').classList.add('hidden');
   document.getElementById('result').classList.add('hidden');
   document.getElementById('hud').classList.remove('hidden');
   document.getElementById('mute').textContent = muted?'♪ OFF':'♪ ON';
-  if('ontouchstart' in window) document.getElementById('touch').classList.remove('hidden');
+  showTouch(true);
   document.getElementById('count').classList.remove('hidden');
   applySelectionsFromUI();
   buildTrack(); buildCars();
@@ -1284,7 +1364,7 @@ function startCountdown(){
 function finish(){
   state='done';
   document.getElementById('hud').classList.add('hidden');
-  document.getElementById('touch').classList.add('hidden');
+  showTouch(false);
   if(eGain) eGain.gain.value=0;
   blip(523,0.16); setTimeout(()=>blip(659,0.16),140); setTimeout(()=>blip(880,0.3),280);
   const finalRank = currentRank();
@@ -1323,49 +1403,179 @@ function resize(){
 }
 
 // ---- input ----
+const holdCount = { left:0, right:0, gas:0, brake:0, boost:0 };
+function holdSet(name, on){
+  const next = Math.max(0, holdCount[name] + (on ? 1 : -1));
+  if(next === holdCount[name]) return;
+  holdCount[name] = next;
+  keys[name] = next > 0;
+}
+function tapFeel(el, kind){
+  if(el) el.classList.add('is-pressed');
+  if(navigator.vibrate){
+    if(kind==='boost') navigator.vibrate([10,24,14]);
+    else if(kind==='brake') navigator.vibrate(18);
+    else if(kind==='gas') navigator.vibrate(16);
+    else navigator.vibrate(12);
+  }
+  if(kind==='gas') blip(130,0.06,'sawtooth');
+  else if(kind==='brake') blip(240,0.045,'triangle');
+  else if(kind==='boost') blip(520,0.04,'square');
+  else if(kind==='dpad') blip(380,0.035,'square');
+  else blip(420,0.04,'square');
+}
 addEventListener('keydown',e=>{
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','Shift'].includes(e.key)) e.preventDefault();
-  if(e.key==='ArrowLeft'||e.key==='a') keys.left=true;
-  if(e.key==='ArrowRight'||e.key==='d') keys.right=true;
-  if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') keys.gas=true;
-  if(e.key==='ArrowDown'||e.key==='s') keys.brake=true;
-  if(e.key==='Shift'||e.key.toLowerCase()==='b') keys.boost=true;
+  if(e.repeat) return;
+  if(e.key==='ArrowLeft'||e.key==='a') holdSet('left',true);
+  if(e.key==='ArrowRight'||e.key==='d') holdSet('right',true);
+  if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') holdSet('gas',true);
+  if(e.key==='ArrowDown'||e.key==='s') holdSet('brake',true);
+  if(e.key==='Shift'||e.key.toLowerCase()==='b') holdSet('boost',true);
 });
 addEventListener('keyup',e=>{
-  if(e.key==='ArrowLeft'||e.key==='a') keys.left=false;
-  if(e.key==='ArrowRight'||e.key==='d') keys.right=false;
-  if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') keys.gas=false;
-  if(e.key==='ArrowDown'||e.key==='s') keys.brake=false;
-  if(e.key==='Shift'||e.key.toLowerCase()==='b') keys.boost=false;
+  if(e.key==='ArrowLeft'||e.key==='a') holdSet('left',false);
+  if(e.key==='ArrowRight'||e.key==='d') holdSet('right',false);
+  if(e.key==='ArrowUp'||e.key==='w'||e.key===' ') holdSet('gas',false);
+  if(e.key==='ArrowDown'||e.key==='s') holdSet('brake',false);
+  if(e.key==='Shift'||e.key.toLowerCase()==='b') holdSet('boost',false);
 });
 let lastTouch=0;
 addEventListener('touchstart',e=>{ const now=Date.now(); if(now-lastTouch<300) e.preventDefault(); lastTouch=now; unlockAudio(); },{passive:false});
-addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+addEventListener('touchend',e=>{ const now=Date.now(); if(now-lastTouch<=300) e.preventDefault(); lastTouch=now; },{passive:false});
+addEventListener('touchmove',e=>{ if(e.target.closest('[data-scrollable]')) return; e.preventDefault(); },{passive:false});
 addEventListener('dblclick',e=>e.preventDefault());
 addEventListener('contextmenu',e=>e.preventDefault());
-function bindHold(el,on,off){
+addEventListener('selectstart',e=>e.preventDefault());
+addEventListener('dragstart',e=>e.preventDefault());
+function bindHold(el, name, kind){
   if(!el) return;
-  const stop=()=>off();
-  el.addEventListener('pointerdown',e=>{ e.preventDefault(); on(); unlockAudio(); if(el.setPointerCapture){ try{ el.setPointerCapture(e.pointerId); }catch(_){ } } });
-  el.addEventListener('pointerup',stop); el.addEventListener('pointercancel',stop); el.addEventListener('pointerleave',stop);
+  const down=e=>{
+    e.preventDefault();
+    unlockAudio();
+    holdSet(name,true);
+    tapFeel(el, kind);
+    if(el.setPointerCapture){ try{ el.setPointerCapture(e.pointerId); }catch(_){ } }
+  };
+  const stop=()=>{ holdSet(name,false); el.classList.remove('is-pressed'); };
+  el.addEventListener('pointerdown',down);
+  el.addEventListener('pointerup',stop);
+  el.addEventListener('pointercancel',stop);
 }
-bindHold(document.getElementById('padL'),()=>keys.left=true, ()=>keys.left=false);
-bindHold(document.getElementById('padR'),()=>keys.right=true,()=>keys.right=false);
-bindHold(document.getElementById('gaspad'),()=>keys.gas=true, ()=>keys.gas=false);
-bindHold(document.getElementById('brakepad'),()=>keys.brake=true,()=>keys.brake=false);
-bindHold(document.getElementById('boostpad'),()=>keys.boost=true,()=>keys.boost=false);
-// auto-gas assist on touch (hold screen middle not needed; gas pad provided)
+function bindCircularDpad(el){
+  if(!el) return;
+  const nub=el.querySelector('.dpad-nub');
+  let held={up:false,down:false,left:false,right:false};
+  let tracking=false, pid=null;
+  const apply=next=>{
+    if(next.left!==held.left) holdSet('left', next.left);
+    if(next.right!==held.right) holdSet('right', next.right);
+    if(next.up!==held.up) holdSet('gas', next.up);
+    if(next.down!==held.down) holdSet('brake', next.down);
+    el.classList.toggle('is-left', next.left);
+    el.classList.toggle('is-right', next.right);
+    el.classList.toggle('is-up', next.up);
+    el.classList.toggle('is-down', next.down);
+    held=next;
+  };
+  const readPt=(x,y)=>{
+    const r=el.getBoundingClientRect();
+    const cx=r.left+r.width/2, cy=r.top+r.height/2;
+    const dx=x-cx, dy=y-cy;
+    const radius=Math.max(24, Math.min(r.width,r.height)/2);
+    const dist=Math.hypot(dx,dy);
+    const reach=Math.min(dist, radius*.42)/(dist||1);
+    if(nub) nub.style.transform='translate('+(dx*reach)+'px,'+(dy*reach)+'px)';
+    if(dist<radius*.16) return {up:false,down:false,left:false,right:false};
+    const oct=Math.round((((Math.atan2(dy,dx)*180/Math.PI)+360)%360)/45)%8;
+    const table=[
+      {right:true},{right:true,down:true},{down:true},{left:true,down:true},
+      {left:true},{left:true,up:true},{up:true},{right:true,up:true}
+    ];
+    return Object.assign({up:false,down:false,left:false,right:false}, table[oct]||{});
+  };
+  const start=(x,y,id)=>{
+    tracking=true; pid=id; el.classList.add('is-pressed');
+    unlockAudio(); tapFeel(el,'dpad'); apply(readPt(x,y));
+  };
+  const move=(x,y)=>{ if(tracking) apply(readPt(x,y)); };
+  const end=()=>{
+    if(!tracking) return;
+    tracking=false; pid=null; el.classList.remove('is-pressed');
+    if(nub) nub.style.transform='';
+    apply({up:false,down:false,left:false,right:false});
+  };
+  el.addEventListener('touchstart',e=>{
+    const t=e.changedTouches[0]; if(!t||tracking) return;
+    e.preventDefault(); start(t.clientX,t.clientY,t.identifier);
+  },{passive:false});
+  document.addEventListener('touchmove',e=>{
+    if(!tracking) return;
+    let t=null;
+    for(let i=0;i<e.touches.length;i++){ if(e.touches[i].identifier===pid) t=e.touches[i]; }
+    if(!t) t=e.touches[0]; if(!t) return;
+    e.preventDefault(); move(t.clientX,t.clientY);
+  },{passive:false,capture:true});
+  const touchEnd=e=>{
+    if(!tracking) return;
+    for(let i=0;i<e.changedTouches.length;i++){ if(e.changedTouches[i].identifier===pid){ end(); return; } }
+    if(e.touches.length===0) end();
+  };
+  document.addEventListener('touchend',touchEnd,{capture:true});
+  document.addEventListener('touchcancel',touchEnd,{capture:true});
+  el.addEventListener('pointerdown',e=>{
+    if(tracking||e.pointerType==='touch') return;
+    e.preventDefault();
+    if(el.setPointerCapture){ try{ el.setPointerCapture(e.pointerId); }catch(_){ } }
+    start(e.clientX,e.clientY,e.pointerId);
+  });
+  document.addEventListener('pointermove',e=>{
+    if(!tracking||e.pointerType==='touch'||e.pointerId!==pid) return;
+    move(e.clientX,e.clientY);
+  });
+  document.addEventListener('pointerup',e=>{ if(e.pointerType!=='touch'&&e.pointerId===pid) end(); },true);
+  document.addEventListener('pointercancel',e=>{ if(e.pointerType!=='touch'&&e.pointerId===pid) end(); },true);
+}
+function bindTap(el, handler){
+  if(!el) return;
+  const fire=e=>{ e.preventDefault(); unlockAudio(); tapFeel(el,'tap'); handler(e); };
+  const release=()=>el.classList.remove('is-pressed');
+  el.addEventListener('pointerdown', fire);
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', release);
+  el.addEventListener('pointerleave', release);
+}
+bindCircularDpad(document.getElementById('dpad'));
+bindHold(document.getElementById('gaspad'),'gas','gas');
+bindHold(document.getElementById('brakepad'),'brake','brake');
+bindHold(document.getElementById('boostpad'),'boost','boost');
 
-function resetInputs(){ keys.left=false; keys.right=false; keys.gas=false; keys.brake=false; keys.boost=false; }
+function resetInputs(){
+  holdCount.left=0; holdCount.right=0; holdCount.gas=0; holdCount.brake=0; holdCount.boost=0;
+  keys.left=false; keys.right=false; keys.gas=false; keys.brake=false; keys.boost=false;
+  ['dpad','gaspad','brakepad','boostpad'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.classList.remove('is-pressed','is-left','is-right','is-up','is-down');
+    const nub=el.querySelector('.dpad-nub');
+    if(nub) nub.style.transform='';
+  });
+}
 addEventListener('blur',resetInputs);
 addEventListener('pagehide',resetInputs);
 addEventListener('visibilitychange',()=>{ if(document.visibilityState!=='visible') resetInputs(); else unlockAudio(); });
 addEventListener('pageshow',unlockAudio);
 addEventListener('focus',unlockAudio);
 
-document.getElementById('startBtn').onclick=startCountdown;
-document.getElementById('againBtn').onclick=startCountdown;
-document.getElementById('mute').onclick=function(){ muted=!muted; localStorage.setItem('sunset_drift_muted', muted?'1':'0'); this.textContent= muted?'♪ OFF':'♪ ON'; if(muted&&eGain) eGain.gain.value=0; };
+bindTap(document.getElementById('startBtn'), startCountdown);
+bindTap(document.getElementById('againBtn'), startCountdown);
+const muteEl=document.getElementById('mute');
+bindTap(muteEl, ()=>{
+  muted=!muted;
+  localStorage.setItem('sunset_drift_muted', muted?'1':'0');
+  muteEl.textContent=muted?'♪ OFF':'♪ ON';
+  if(muted&&eGain) eGain.gain.value=0;
+});
 
 // ---- boot ----
 buildTrack(); buildCars(); resize();
